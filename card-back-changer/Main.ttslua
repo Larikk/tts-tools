@@ -1,4 +1,4 @@
-local url = nil
+local url = ""
 
 function onInput(obj, color, input)
     url = input
@@ -45,13 +45,19 @@ function onObjectEnterContainer(container, object)
     end
 end
 
-function onLoad()
+function onLoad(save_state)
+    url = save_state
     self.createInput({
         function_owner = self,
         input_function = "onInput",
         label = "URL to a card back",
+        value = url or "",
         position = Vector(0, 3, -1.8),
         width = 1800,
         height = 200
     })
+end
+
+function onSave()
+    return url or ""
 end
