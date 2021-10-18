@@ -1,0 +1,46 @@
+local module = {}
+
+function trim(s)
+   local _, i1 = string.find(s,'^%s*')
+   local i2 = string.find(s,'%s*$')
+   return string.sub(s, i1 + 1, i2 - 1)
+end
+
+local function lines(str)
+    local parts = {}
+    local pattern = "[^\r\n]+"
+    for s in string.gmatch(str, pattern) do
+        s = trim(s)
+        if s ~= "" then
+            table.insert(parts, s)
+        end
+    end
+    return parts
+end
+
+
+function module.parse(str)
+    local links = lines(str)
+
+    if #links == 0 then
+        error("No links specified")
+    elseif #links == 1 then
+        error("No fronts specified")
+    end
+
+    local back = links[1]
+    table.remove(links, 1)
+
+    local cards = {}
+
+    for i, cardFront in ipairs(links) do
+        cards[i] = {
+            front = cardFront,
+            back = back,
+        }
+    end
+
+    return cards
+end
+
+return module

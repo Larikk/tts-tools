@@ -1,0 +1,44 @@
+local module = {}
+
+local function convertUnicodeSequences(str)
+    local pattern = [[\u[0-9a-fA-F]+]]
+    local f = function(s) return string.sub(s, 1, 2) .. "{" .. string.sub(s, 3, 6) .. "}" .. string.sub(s, 7) end
+    return string.gsub(str, pattern, f)
+end
+
+function module.parse(str)
+    str = convertUnicodeSequences(str)
+    local deckData = json.parse(str)
+
+    local cards = deckData.cards
+    local defaults = deckData.defaults or {}
+
+    if cards == nil then
+        error("Section 'cards' is missing")
+    end
+
+    local out = {}
+
+    for i, card in ipairs(cards) do
+        for key, defaultValue in pairs(defaults) do
+            card[key] = card[key] or defaultValue
+        end
+
+        if card.front == nil or card.front == "" then
+            error("Card " .. i .. " is missing a front")
+        end
+
+        if card.back == nil or card.back == "" then
+            error("Card " .. i .. " is missing a back")
+        end
+
+        local count = card.count or 1
+        for j = 1, count do
+            table.insert(out, card)
+        end
+    end
+
+    return out
+end
+
+return module

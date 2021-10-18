@@ -1,0 +1,35 @@
+<Defaults>
+    <!-- Color scheme: https://flatuicolors.com/palette/defo-->
+    <HorizontalLayout childForceExpandHeight="false" childForceExpandWidth="false" childAlignment="MiddleCenter"/>
+    <VerticalLayout childForceExpandHeight="false" childForceExpandWidth="false"/>
+
+    <Panel class="window" color="#ecf0f1" width="1600" height="1600" position="0 0 -2"/>
+
+    <Text fontSize="50"/>
+    <ToggleGroup minHeight="100" minWidth="400"/>
+    <ToggleButton minWidth="200" minHeight="100" fontSize="40"/>
+    <Button minHeight="100" minwidth="250" fontSize="50" fontStyle="bold"/>
+    <Button class="green" textColor="#ecf0f1" colors="#27ae60|#2ecc71|#2ecc71|grey"/>
+</Defaults>
+
+<Panel class="window" active="true">
+    <VerticalLayout padding="30" spacing="20">
+        <Text fontSize="55" fontStyle="bold" alignment="MiddleLeft">Insert your data. Check the mod description for examples.</Text>
+        <InputField id="data-input" onValueChanged="handleInput" lineType="MultiLineNewline" fontSize="40" flexibleHeight="1" flexibleWidth="1" text=""/>
+        <HorizontalLayout flexibleWidth="1">
+            <HorizontalLayout spacing="30">
+                <Text>Mode</Text>
+                <ToggleGroup>
+                    <HorizontalLayout>
+                        <ToggleButton id="basic-toggle" onValueChanged="toggleMode">Basic</ToggleButton>
+                        <ToggleButton id="advanced-toggle" onValueChanged="toggleMode">Advanced</ToggleButton>
+                    </HorizontalLayout>
+                </ToggleGroup>
+            </HorizontalLayout>
+            <HorizontalLayout flexibleWidth="1"/>
+            <HorizontalLayout childAlignment="MiddleRight">
+                <Button onClick="importDeck" class="green">Import</Button>
+            </HorizontalLayout>
+        </HorizontalLayout>
+    </VerticalLayout>
+</Panel>

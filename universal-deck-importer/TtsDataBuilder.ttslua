@@ -1,0 +1,102 @@
+local module = {}
+
+local TRANSFORM_ATTRIBUTE_DUMMY = {
+    posX = 0,
+    posY = 3,
+    posZ = 0,
+    rotX = 0,
+    rotY = 0,
+    rotZ = 0,
+    scaleX = 1,
+    scaleY = 1,
+    scaleZ = 1,
+}
+
+local CARD_ID_DUMMY = 1
+
+--[[
+    Creates data for a card that can be used with spawnObjectData().
+
+    Example input:
+    {
+        front = "https://example.com/front.png",
+        back = "https://example.com/back.png",
+        name = "Some name",
+        description = "Some description",
+    }
+
+    Front and Back are mandatory, everything else is optional
+--]]
+function module.card(card)
+    return {
+        Name = "CardCustom",
+        Nickname = card.name,
+        Description = card.description,
+        Transform = TRANSFORM_ATTRIBUTE_DUMMY,
+        CardID = CARD_ID_DUMMY * 100,
+        CustomDeck = {
+            [CARD_ID_DUMMY] = {
+                FaceURL = card.front,
+                BackURL = card.back,
+                NumWidth = 1,
+                NumHeight = 1,
+                BackIsHidden = true,
+                UniqueBack = false,
+                Type = 0,
+            }
+        }
+    }
+end
+
+--[[
+    Creates data for a deck that can be used with spawnObjectData().
+
+    Input is a table of cards.
+    The structure of a single card can be found above.
+--]]
+function module.deck(deck)
+    local data = {
+        Name = "Deck",
+        Transform = TRANSFORM_ATTRIBUTE_DUMMY,
+        DeckIDs = {}, -- integers: 1000, 800, 600, 400, 200
+        CustomDeck = {}, -- objects with FaceURL and BackURL; Index: 10, 8, 6, 4, 2
+        ContainedObjects = {}, -- objects with Nickname (string) and CardID (see DeckIDS): 1, 2, 3...
+    }
+
+    local n = #deck
+
+    -- We reverse so that the first card is with the face at the bottom
+    -- Iterating backwards does not work
+    local reversedDeck = {}
+    for i = 1, n do
+        reversedDeck[i] = deck[n+1-i]
+    end
+    deck = reversedDeck
+
+    local currentCardId = n * 200
+
+    for i = 1, n do
+        local card = deck[i]
+        local cardData = module.card(card)
+
+        data.DeckIDs[i] = currentCardId
+        cardData.CardID = currentCardId
+
+        local customDeckIndex = currentCardId / 100
+        local customDeckEntry = cardData.CustomDeck[CARD_ID_DUMMY]
+
+        data.CustomDeck[customDeckIndex] = customDeckEntry
+        data.ContainedObjects[i] = cardData
+        data.ContainedObjects[i].CustomDeck = {
+            [customDeckIndex] = customDeckEntry
+        }
+
+        cardData.CustomDeck[CARD_ID_DUMMY] = nil
+
+        currentCardId = currentCardId - 200
+    end
+
+    return data
+end
+
+return module

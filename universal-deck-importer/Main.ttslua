@@ -1,0 +1,41 @@
+local basicParser = require("tts-tools/universal-deck-importer/BasicParser")
+local advancedParser = require("tts-tools/universal-deck-importer/AdvancedParser")
+local dataBuilder = require("tts-tools/universal-deck-importer/TtsDataBuilder")
+
+local basicMode = true
+local dataInput = ""
+
+function toggleMode(player, value, id)
+    if value == "False" then return end
+
+    if id == "basic-toggle" then
+        basicMode = true
+    elseif id == "advanced-toggle" then
+        basicMode = false
+    else
+        error("Invalid id " .. id)
+    end
+
+end
+
+function handleInput(player, value, id)
+    dataInput = value
+end
+
+function importDeck()
+    local data = nil
+    if basicMode then
+        data = basicParser.parse(dataInput)
+    else
+        data = advancedParser.parse(dataInput)
+    end
+
+    local ttsData = dataBuilder.deck(data)
+
+    local params = {
+        data = ttsData,
+        position = Vector(0, 5, 10),
+        rotation = Vector(0, 180, 0),
+    }
+    spawnObjectData(params)
+end
