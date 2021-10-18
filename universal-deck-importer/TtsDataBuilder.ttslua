@@ -36,8 +36,8 @@ function module.card(card)
         CardID = CARD_ID_DUMMY * 100,
         CustomDeck = {
             [CARD_ID_DUMMY] = {
-                FaceURL = card.front,
-                BackURL = card.back,
+                FaceURL = card.front or error("No front specified"),
+                BackURL = card.back or error("No back specified"),
                 NumWidth = 1,
                 NumHeight = 1,
                 BackIsHidden = true,
